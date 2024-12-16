@@ -5,7 +5,7 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-    
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3&display=swap" rel="stylesheet">
     
@@ -15,9 +15,40 @@
 
 @favicon
 @section('content')
-<h3 class="title text-center mb-4 pt-5 pb-1" style="color: #333; font-weight: bold; font-size: 24px;">Data Pelanggaran</h3>
 
 <div class="container mt-2">
+    <!-- Tabel Spesial; Butuh Tanggapan -->
+    @if($urgentPelanggaran->isNotEmpty())
+        <h4 class="text-center mb-3" style="color: #FF5733;">BUTUH TANGGAPAN</h4>
+        <table class="table text-center" style="border-collapse: separate; border-spacing: 0; width: 100%;">
+            <thead>
+                <tr style="background-color: #FF5733; color: #fff; border-radius: 10px;">
+                    <th>Nama</th>
+                    <th>NIM</th>
+                    <th>Pelanggaran</th>
+                    <th>Poin</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody style="background-color: #FFF0E1;">
+                @foreach ($urgentPelanggaran as $item)
+                <tr>
+                    <td>{{ $item->user->nama }}</td>
+                    <td>{{ $item->user->nim }}</td>
+                    <td>{{ $item->listPelanggaran->nama_pelanggaran }}</td>
+                    <td>{{ $item->listPelanggaran->poin }}</td>
+                    <td>
+                        <span>{{ $item->status }}</span>
+                        <br>
+                        <a href="{{ route('pelanggaran.showComments', $item->id) }}" class="btn btn-sm mt-2" style="background-color: #5AADC2; color: white;">Lihat</a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
+
+    <h3 class="title text-center mb-4 pt-5 pb-1" style="color: #333; font-weight: bold; font-size: 24px;">Data Pelanggaran</h3>
     <div class="card-body p-4">
         <!-- Form Pencarian -->
         <form action="{{ route('pelanggaran.search') }}" method="GET" class="mb-4" style="text-align: right;">
@@ -40,6 +71,7 @@
             </div>
         </form>
 
+        <!-- Tabel Utama -->
         <table class="table text-center" style="border-collapse: separate; border-spacing: 0; width: 100%;">
             <thead>
                 <tr style="background-color: #5AADC2; color: #fff; border-radius: 10px; box-shadow: 0px 4px 4px rgba(90, 173, 194, 0.16)">
