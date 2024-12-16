@@ -123,12 +123,12 @@ class PelanggaranController extends Controller
         $userId = Auth::id();
 
         // Get the list of violations (pelanggaran) for the authenticated user
-        $pelanggaranList = Pelanggaran::where('user_id', $userId)
+        $pelanggaran = Pelanggaran::where('user_id', $userId)
             ->orderBy('created_at', 'desc')
             ->get();
 
         // Return to the view
-        return view('fitur.pelanggaranMahasiswa', compact('pelanggaranList'));
+        return view('fitur.pelanggaranMahasiswa', compact('pelanggaran'));
     }
 
     public function showDetailMahasiswa($id)
@@ -179,6 +179,10 @@ class PelanggaranController extends Controller
             return view('fitur.detailAdmin-no-response', compact('pelanggaran'));
         }
 
+        if ($level === 'Level 5') {
+            return view('fitur.detailAdmin-no-response', compact('pelanggaran'));
+        }
+
         // If authorized, show the comments page
         return view('fitur.detailPelanggaran', compact('pelanggaran'));
     }
@@ -222,6 +226,18 @@ class PelanggaranController extends Controller
                 'user_id' => $request->user()->id,
                 'action' => 'Level Updated',
                 'details' => 'Level changed to Level 2 by Dosen Wali',
+            ]);
+        }
+
+        // Check if the user is 'Komisi Disiplin' and the current level is 'Level 3'
+        if ($request->user()->role === 'Komisi Disiplin' && $pelanggaran->level === 'Level 3') {
+            // Update level to 'Level 3'
+            $pelanggaran->level = 'Level 4';
+            PelanggaranLog::create([
+                'pelanggaran_id' => $pelanggaran->id,
+                'user_id' => $request->user()->id,
+                'action' => 'Level Updated',
+                'details' => 'Level changed to Level 4 by Komisi Disiplin',
             ]);
         }
 

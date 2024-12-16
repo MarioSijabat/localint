@@ -47,30 +47,25 @@
     </div>
 </div>
 
-@if ($pelanggaran->level !== null)
-    <!-- Show comments if level is not null -->
-    <div class="container mt-5">
-        <h4>Tanggapan Sebelumnya</h4>
-        @foreach ($pelanggaran->comments as $comment)
-            <div class="comment mb-3 p-3 border rounded">
-                <p>
-                    <strong>({{ $comment->user->role }}) {{ $comment->user->nama }}</strong>
-                    <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
-                </p>
-                <p>{{ $comment->comment }}</p>
+<div class="container mt-5">
+    <h4>Tanggapan Sebelumnya</h4>
+    @foreach ($pelanggaran->comments as $comment)
+        <div class="comment mb-3 p-3 border rounded">
+            <p>
+                <strong>({{ $comment->user->role }}) {{ $comment->user->nama }}</strong>
+                <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
+            </p>
+            <p>{{ $comment->comment }}</p>
 
-                @if ($comment->file_path)
-                    <p>
-                        <a href="{{ asset('storage/files/' . $comment->file) }}" class="btn btn-sm mt-2" style="background-color: #5AADC2; color: white;" download>
-                            Download Attached File
-                        </a>
-                    </p>
-                @endif
-            </div>
-        @endforeach
-    </div>
-@else
-    <!-- NOTHING -->
-@endif
+            @if ($comment->file_path)
+                <p>
+                    <a href="{{ asset('storage/files/' . $comment->file) }}" class="btn btn-sm mt-2" style="background-color: #5AADC2; color: white;" download>
+                        Download Attached File
+                    </a>
+                </p>
+            @endif
+        </div>
+    @endforeach
+</div>
 
 @endsection

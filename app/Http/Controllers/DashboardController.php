@@ -61,10 +61,14 @@ class DashboardController extends Controller
       // Dosen Wali: Only see pelanggaran assigned to students where 'wali' matches the Dosen's name
       $pelanggaran = $pelanggaranQuery->whereHas('user', function ($query) use ($user) {
         $query->where('wali', $user->nama);
-      })->orderBy('created_at', 'desc')->paginate(10); // Add pagination for Dosen
+      })->orderBy('created_at', 'desc')->paginate(10);
     } elseif ($user->role === 'Komisi Disiplin') {
-      // Komisi Disiplin: Only see Level 3
-      $pelanggaran = $pelanggaranQuery->where('level', 'Level 3')->orderBy('created_at', 'desc')->paginate(10); // Add pagination for Komisi Disiplin
+      // Komisi Disiplin: See Level 3, 4, and 5
+      $pelanggaran = $pelanggaranQuery->where(function ($query) {
+        $query->where('level', 'Level 3')
+          ->orWhere('level', 'Level 4')
+          ->orWhere('level', 'Level 5');
+      })->orderBy('created_at', 'desc')->paginate(10);
     } elseif ($user->role === 'Rektor') {
       // Rektor: See both Level 4 and Level 5
       $pelanggaran = $pelanggaranQuery->where(function ($query) {
@@ -73,10 +77,10 @@ class DashboardController extends Controller
       })->orderBy('created_at', 'desc')->paginate(10); // Add pagination for Rektor
     } elseif ($user->role === 'Kemahasiswaan' || $user->role === 'Keasramaan') {
       // Kemahasiswaan & Keasramaan: View all pelanggaran
-      $pelanggaran = $pelanggaranQuery->orderBy('created_at', 'desc')->paginate(10); // Add pagination for Kemahasiswaan & Keasramaan
+      $pelanggaran = $pelanggaranQuery->orderBy('created_at', 'desc')->paginate(10);
     } else {
-      // Default: admin has access to all pelanggaran
-      $pelanggaran = $pelanggaranQuery->orderBy('created_at', 'desc')->paginate(10); // Default with pagination
+      // Default: admin has master access
+      $pelanggaran = $pelanggaranQuery->orderBy('created_at', 'desc')->paginate(10);
     }
 
     // Pass data to the view with pagination
@@ -99,9 +103,7 @@ class DashboardController extends Controller
 
     // Terapkan filter berdasarkan role
     if ($user->role === 'Orang Tua') {
-      $query->whereHas('user', function ($q) use ($user) {
-        $q->where('wali', $user->nama);
-      });
+      $query->where('user_id', $user->id);
     }
 
     switch ($kategori) {
@@ -123,13 +125,15 @@ class DashboardController extends Controller
           $q->where('nama_pelanggaran', 'like', "%{$search}%");
         });
         break;
+      default:
+        return redirect()->back()->withErrors('Kategori tidak valid');
     }
 
     $pelanggaran = $query->orderBy('created_at', 'desc')->paginate(10);
 
     // Tentukan view berdasarkan role
     if ($user->role === 'Orang Tua') {
-      return view('pelanggaranMahasiswa', compact('pelanggaran', 'user'));
+      return view('fitur.pelanggaranMahasiswa', compact('pelanggaran', 'user'));
     } else {
       return view('dashboard.admin', compact('pelanggaran'));
     }

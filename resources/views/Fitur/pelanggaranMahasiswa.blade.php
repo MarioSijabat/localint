@@ -40,20 +40,22 @@
                 </tr>
             </thead>
             <tbody style="background-color: #E7FAFF; box-shadow: 0px 4px 6px rgba(90, 173, 194, 0.54); border-radius: 30px;">
-                @forelse ($pelanggaranList as $item)
-                <tr style="background-color: #E7FAFF; border-bottom: 4px solid #fff; border-radius: 30px;">
-                    <td style="padding: 15px;">{{ $item->user->nama }}</td>
-                    <td style="padding: 15px; max-width: 100px; word-wrap: break-word;">{{ $item->user->nim }}</td>
-                    <td style="padding: 15px; max-width: 200px; word-wrap: break-word;">{{ $item->listPelanggaran->nama_pelanggaran }}</td>
-                    <td style="padding: 15px; max-width: 80px; word-wrap: break-word;">{{ $item->listPelanggaran->poin }}</td>
-                    <td style="padding: 15px; max-width: 150px; word-wrap: break-word;">
-                        <span>{{ $item->status }}</span>
-                        <br>
-                        <a href="{{ route('pelanggaranMahasiswa.detail', $item->id) }}" class="btn btn-sm mt-2" style="background-color: #5AADC2; color: white;">Lihat</a>
-                    </td>
-                </tr>
+                @forelse ($pelanggaran as $item)
+                    <tr style="background-color: #E7FAFF; border-bottom: 4px solid #fff; border-radius: 30px;">
+                        <td style="padding: 15px;">{{ $item->user->nama }}</td>
+                        <td style="padding: 15px; max-width: 100px; word-wrap: break-word;">{{ $item->user->nim }}</td>
+                        <td style="padding: 15px; max-width: 200px; word-wrap: break-word;">{{ $item->listPelanggaran->nama_pelanggaran }}</td>
+                        <td style="padding: 15px; max-width: 80px; word-wrap: break-word;">{{ $item->listPelanggaran->poin }}</td>
+                        <td style="padding: 15px; max-width: 150px; word-wrap: break-word;">
+                            <span>{{ $item->status }}</span>
+                            <br>
+                            <a href="{{ route('pelanggaranMahasiswa.detail', $item->id) }}" class="btn btn-sm mt-2" style="background-color: #5AADC2; color: white;">Lihat</a>
+                        </td>
+                    </tr>
+
                 @empty
-                <p class="text-center">Mahasiswa tidak memiliki pelanggaran.</p>
+                    <p class="text-center">Mahasiswa tidak memiliki pelanggaran.</p>
+
                 @endforelse
             </tbody>
         </table>
