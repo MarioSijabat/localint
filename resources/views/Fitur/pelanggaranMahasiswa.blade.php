@@ -59,7 +59,9 @@
                 @endforelse
             </tbody>
         </table>
-        
+
+        <!-- Pagination Links -->
+        {{ $pelanggaran->links() }}
     </div>
 </div>
 @endsection

@@ -125,7 +125,7 @@ class PelanggaranController extends Controller
         // Get the list of violations (pelanggaran) for the authenticated user
         $pelanggaran = Pelanggaran::where('user_id', $userId)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10);
 
         // Return to the view
         return view('fitur.pelanggaranMahasiswa', compact('pelanggaran'));

@@ -3,6 +3,7 @@
 @section('title', 'Detail Pelanggaran')
 
 @push('css')
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('css/detail-mahasiswa.css') }}">
 @endpush
 
