@@ -1,133 +1,179 @@
-@extends('layouts.app')
+@extends('adminlte::page')
 
 @section('title', 'Form Pelanggaran')
 
+@push('css')
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <!-- Google Fonts (Pastikan font 'Source Sans 3' terimport) -->
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 15px;
+            color: #484444
+        }
+    </style>
+@endpush
+
 @section('content')
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Form Pelanggaran</h2>
-    <form action="{{ route('pelanggaran.store') }}" method="POST" class="shadow p-4 rounded" style="max-width: 600px; margin: auto; background: #f9f9f9;">
+
+    <!-- Display Success -->
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    <!-- Display Errors -->
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
+    <!-- Pelanggaran Form -->
+    <form action="{{ route('pelanggaran.store') }}" method="POST" class="p-4 rounded" style="max-width: 600px; margin-top: 80px; margin-left: 250px; box-shadow: 0px 0px 30px rgba(90, 173, 194, 0.54)" enctype="multipart/form-data">
+        <h2 class="text-center mb-5">Form Pelanggaran</h2>
         @csrf
 
-        <!-- Angkatan Dropdown -->
+        <!-- Angkatan Textbox -->
         <div class="mb-3">
-            <label for="angkatan" class="form-label">Angkatan:</label>
-            <select name="angkatan" id="angkatan" class="form-select">
-                <option value="">Pilih Angkatan</option>
-                @foreach ($angkatans as $angkatan)
-                    <option value="{{ $angkatan }}">{{ $angkatan }}</option>
-                @endforeach
-            </select>
+            <label for="angkatan" class="form-label" style="font-weight: normal;">Angkatan:</label>
+            <input type="text" name="angkatan" id="angkatan" class="form-control">
         </div>
 
-        <!-- Prodi Dropdown -->
+        <!-- Prodi Textbox -->
         <div class="mb-3">
-            <label for="prodi" class="form-label">Prodi:</label>
-            <select name="prodi" id="prodi" class="form-select">
-                <option value="">Pilih Prodi</option>
-                @foreach ($prodis as $prodi)
-                    <option value="{{ $prodi }}">{{ $prodi }}</option>
-                @endforeach
-            </select>
+            <label for="prodi" class="form-label" style="font-weight: normal;">Prodi:</label>
+            <input type="text" name="prodi" id="prodi" class="form-control">
         </div>
 
-        <!-- NIM Dropdown -->
+        <!-- NIM Textbox -->
         <div class="mb-3">
-            <label for="nim" class="form-label">NIM:</label>
-            <select name="nim" id="nim" class="form-select">
-                <option value="">Pilih NIM</option>
-                <!-- Opsi NIM akan diupdate secara dinamis -->
-            </select>
+            <label for="nim" class="form-label" style="font-weight: normal;">NIM:</label>
+            <input type="text" name="nim" id="nim" class="form-control">
         </div>
 
-        <!-- Nama Dropdown -->
+        <!-- Nama Textbox -->
         <div class="mb-3">
-            <label for="nama" class="form-label">Nama:</label>
-            <select name="nama" id="nama" class="form-select">
-                <option value="">Pilih Nama</option>
-                <!-- Opsi Nama akan diupdate secara dinamis -->
-            </select>
+            <label for="nama" class="form-label" style="font-weight: normal;">Nama:</label>
+            <input type="text" name="nama" id="nama" class="form-control">
         </div>
 
-        <!-- Poin Pelanggaran Dropdown (dari tabel poin_pelanggaran) -->
+        <!-- Jenis Pelanggaran Dropdown -->
         <div class="mb-3">
-            <label for="poin_pelanggaran" class="form-label">Poin Pelanggaran:</label>
-            <select name="poin_pelanggaran" id="poin_pelanggaran" class="form-select">
-                <option value="">Pilih Poin Pelanggaran</option>
+            <label for="poin_pelanggaran" class="form-label">Jenis Pelanggaran:</label>
+            <select name="list_pelanggaran_id" id="poin_pelanggaran" class="form-select">
+                <option value="">Pilih Jenis Pelanggaran</option>
                 @foreach ($poinPelanggaran as $poin)
-                    <option value="{{ $poin->id }}">{{ $poin->nama_pelanggaran }} ({{ $poin->poin }} Poin)</option>
+                    <option value="{{ $poin->id }}" {{ old('list_pelanggaran_id') == $poin->id ? 'selected' : '' }}>
+                        {{ $poin->nama_pelanggaran }} ({{ $poin->poin }} Poin)
+                    </option>
                 @endforeach
             </select>
+            @if ($errors->has('poin_pelanggaran'))
+                <div class="text-danger">{{ $errors->first('poin_pelanggaran') }}</div>
+            @endif
+        </div>
+
+        <!-- Laporan Comment Textbox -->
+        <div class="mb-3">
+            <label for="comment" class="form-label">Laporan:</label>
+            <textarea name="comment" id="comment" class="form-control" rows="4" required>{{ old('comment') }}</textarea>
+        </div>
+
+        <!-- File Upload (Optional) -->
+        <div class="mb-3">
+            <label for="file" class="form-label">Lampirkan File (Opsional):</label>
+            <input type="file" name="file" id="file" class="form-control">
         </div>
 
         <!-- Submit Button -->
         <div class="text-center">
-            <button type="submit" class="btn btn-primary">Kirim</button>
+            <button type="submit" class="btn text-bold mt-5" style="background-color: #5AADC2; padding: 5px 22px; color: #fff">Kirim</button>
         </div>
     </form>
 </div>
+
 @endsection
 
-@section('scripts')
-<script>
-    // Ketika dropdown angkatan atau prodi berubah
-    document.getElementById('angkatan').addEventListener('change', updateMahasiswaOptions);
-    document.getElementById('prodi').addEventListener('change', updateMahasiswaOptions);
-
-    // Ketika dropdown nim atau nama berubah
-    document.getElementById('nim').addEventListener('change', updateNameFromNim);
-    document.getElementById('nama').addEventListener('change', updateNimFromName);
-
-    let mahasiswaData = [];  // Menyimpan data mahasiswa yang sudah diambil
-
-    function updateMahasiswaOptions() {
-        // Ambil nilai dari dropdown angkatan dan prodi
-        const angkatan = document.getElementById('angkatan').value;
-        const prodi = document.getElementById('prodi').value;
-
-        // Cek apakah kedua dropdown angkatan dan prodi sudah dipilih
-        if (angkatan && prodi) {
-            // Kirim request AJAX untuk mendapatkan data mahasiswa berdasarkan angkatan dan prodi
-            fetch(`/pelanggaran/get-mahasiswa?angkatan=${angkatan}&prodi=${prodi}`)
-                .then(response => response.json())
-                .then(data => {
-                    mahasiswaData = data;  // Simpan data mahasiswa yang diterima
-                    // Update opsi di dropdown NIM dan Nama
-                    updateDropdown('nim', data, 'nim');
-                    updateDropdown('nama', data, 'nama');
-                })
-                .catch(error => console.log('Error:', error));
+@section('css')
+    <!-- CSS for Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    
+    <style>
+        .form-label {
+            margin-bottom: 4px !important;
         }
-    }
 
-    // Fungsi untuk memperbarui dropdown berdasarkan data yang diterima
-    function updateDropdown(elementId, data, valueKey) {
-        const dropdown = document.getElementById(elementId);
-        dropdown.innerHTML = `<option value="">Pilih ${elementId.charAt(0).toUpperCase() + elementId.slice(1)}</option>`;  // Reset dropdown
-        
-        data.forEach(mahasiswa => {
-            const option = document.createElement('option');
-            option.value = mahasiswa[valueKey];
-            option.textContent = mahasiswa.nama;
-            dropdown.appendChild(option);
+        .form-control,
+        .form-select {
+            margin-top: 0 !important;
+        }
+
+        #poin_pelanggaran {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        #poin_pelanggaran option {
+            white-space: normal;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .select2-container--default .select2-selection--single {
+            height: 30px !important;
+            line-height: 30px !important;
+            align-items: center !important;
+            display: flex !important;
+        }
+
+        .select2-results__option--highlighted {
+            background-color: #5AADC2 !important;
+            color: #fff !important;
+        }
+
+        .select2-results__option {
+            padding: 10px !important;
+        }
+
+        .select2-selection__clear {
+            background-color: red !important;
+            color: white !important;
+            border-radius: 50%;
+            font-size: 12px !important;
+            width: 13px;
+            height: 13px;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            transform: translateY(60%);
+            margin-left: 5px;
+        }
+
+        .select2-selection__clear:hover {
+            background-color: darkred !important;
+        }
+    </style>
+@endsection
+
+@section('js')
+    <!-- JS for Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#poin_pelanggaran').select2({
+                placeholder: 'Pilih Jenis Pelanggaran',
+                allowClear: true,
+                width: '100%'  // Menyesuaikan lebar dropdown dengan container
+            });
         });
-    }
-
-    // Fungsi untuk update nama dari NIM
-    function updateNameFromNim() {
-        const selectedNim = document.getElementById('nim').value;
-        const selectedMahasiswa = mahasiswaData.find(mahasiswa => mahasiswa.nim == selectedNim);
-        if (selectedMahasiswa) {
-            document.getElementById('nama').value = selectedMahasiswa.nama;
-        }
-    }
-
-    // Fungsi untuk update NIM dari nama
-    function updateNimFromName() {
-        const selectedNama = document.getElementById('nama').value;
-        const selectedMahasiswa = mahasiswaData.find(mahasiswa => mahasiswa.nama == selectedNama);
-        if (selectedMahasiswa) {
-            document.getElementById('nim').value = selectedMahasiswa.nim;
-        }
-    }
-</script>
+    </script>
 @endsection

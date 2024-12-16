@@ -25,6 +25,7 @@ class User extends Authenticatable
         'kelas',
         'prodi',
         'wali',
+        'image',
         'role',
     ];
 
@@ -60,6 +61,7 @@ class User extends Authenticatable
                 'kelas',
                 'prodi',
                 'wali',
+                'image',
             ]);
         }
 
@@ -68,5 +70,25 @@ class User extends Authenticatable
             'nama',
             'username',
         ]);
+    }
+
+    public function pelanggarans()
+    {
+        return $this->hasMany(Pelanggaran::class, 'user_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'user_id');
+    }
+
+    public function getRoleAttribute($value)
+    {
+        return ucfirst($value);
+    }
+
+    public function adminlte_image()
+    {
+        return asset('/img/shutdown.png'); // Pastikan file ada di 'public/images/'
     }
 }
